@@ -14,6 +14,7 @@ with executable permissions.
 
 # TODO
 - Implement `restart`
+- Support multiple Environment Variables
 - Trim key/values from .service files
 
 # Build

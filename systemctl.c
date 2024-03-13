@@ -17,6 +17,7 @@ typedef struct Service {
     char *workingDirectory;
     char *execStart;
     char *arguments;
+    char *environment;
 } Service;
 
 char *commands[] = {
@@ -133,6 +134,11 @@ int start_background_process(Service s) {
         return 3;
     }
 
+    if (s.environment != NULL) {
+        printf("Setting environment variable: %s\n", s.environment);
+        putenv(s.environment);
+    }
+
     // Replace the current process image with the given program
     char *args[] = {s.execStart, s.arguments, NULL};
     execvp(args[0], args);
@@ -171,6 +177,8 @@ Service parse_service_from_lines(char** lines, int num_lines, char* name) {
     char* workingDirectory = NULL;
     char* execStart = NULL;
     char* arguments = NULL;
+    char* environment = NULL;
+
     for (int i = 0; i < num_lines; i++){
         if (strstr(lines[i], "WorkingDirectory") != NULL){
             workingDirectory = lines[i] + 17;
@@ -193,12 +201,18 @@ Service parse_service_from_lines(char** lines, int num_lines, char* name) {
 
             arguments[strcspn(arguments, "\n")] = 0; // trim
         }
+
+        if (strstr(lines[i], "Environment") != NULL){
+            environment = lines[i] + 12;
+            environment[strcspn(environment, "\n")] = 0; // trim
+        }
     }
     Service s = {
         .name = name,
         .workingDirectory = workingDirectory,
         .execStart = execStart,
-        .arguments = arguments
+        .arguments = arguments,
+        .environment = environment
     };
 
     return s;
@@ -270,6 +284,7 @@ int main(int argc, char *argv[]){
     printf("WorkingDirectory: %s\n", s.workingDirectory);
     printf("ExecStart: %s\n", s.execStart);
     printf("Arguments: %s\n", s.arguments);
+    printf("Environment: %s\n", s.environment);
 
     // execute command
     if (strcmp(argv[1], "start") == 0){
