@@ -1,8 +1,9 @@
-# Pseudo Systemd
+# Pseudo Systemd (Run systemd inside Docker container)
 Pseudo systemd is a mock service manager designed for testing purposes. 
 It will run systemd commands on Docker. It simulates the behavior of the systemd service manager,
 allowing you to start, stop, restart services as if you were working with the 
-real systemd, this makes it an useful with Docker containers.
+real systemd, this makes it an useful with Docker containers. So basically it runs  
+systemd inside Docker container.
 
 # How it works
 This application fetches service files located in the `/etc/systemd/system` directory. It then parses 
